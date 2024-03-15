@@ -14,7 +14,7 @@ namespace WebApi.Controllers
         private readonly IFileUploadService _fileUploadService;
 
         /// <summary>
-        /// 
+        /// Initializes a <see cref="FileController"/>
         /// </summary>
         /// <param name="fileUploadService"></param>
         /// <exception cref="ArgumentNullException"></exception>
@@ -23,28 +23,24 @@ namespace WebApi.Controllers
             _fileUploadService = fileUploadService ?? throw new ArgumentNullException(nameof(fileUploadService));
         }
 
+        /// <summary>
+        /// Uploads a file
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> PostUploadAsync(List<IFormFile> files)
+        public async Task<IActionResult> PostUploadAsync(IFormFile file)
         {
-            long size = files.Sum(f => f.Length);
-
-            foreach (var formFile in files)
+            if (file.Length > 0)
             {
-                if (formFile.Length > 0)
-                {
-                    var filePath = Path.GetTempFileName();
-
-                    using (var stream = System.IO.File.Create(filePath))
-                    {
-                        await formFile.CopyToAsync(stream);
-                    }
-                }
+                var fileStream = file.OpenReadStream();
+                await _fileUploadService.UploadAsync(fileStream);
             }
 
             // Process uploaded files
             // Don't rely on or trust the FileName property without validation.
 
-            return Ok(new { count = files.Count, size });
+            return Ok();
         }
 
         //// GET: api/<FileController>

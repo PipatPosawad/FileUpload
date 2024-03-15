@@ -1,7 +1,7 @@
-namespace Service.Test
+namespace DataAccess.Test
 {
     [TestClass]
-    public class UnitTest1
+    public class FileBlobRepositoryTests
     {
         [TestMethod]
         public void TestMethod1()
