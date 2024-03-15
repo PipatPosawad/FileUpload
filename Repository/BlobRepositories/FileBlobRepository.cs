@@ -1,6 +1,6 @@
 ﻿using Domain.BlobRepositories;
 
-namespace Repository.BlobRepositories
+namespace DataAccess.BlobRepositories
 {
     public class FileBlobRepository : IFileBlobRepository
     {

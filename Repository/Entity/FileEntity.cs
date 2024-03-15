@@ -1,4 +1,4 @@
-﻿namespace Repository.Entity
+﻿namespace DataAccess.Entity
 {
     public class FileEntity
     {

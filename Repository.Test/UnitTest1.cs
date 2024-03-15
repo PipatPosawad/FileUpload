@@ -1,4 +1,4 @@
-namespace Repository.Test
+namespace DataAccess.Test
 {
     [TestClass]
     public class UnitTest1

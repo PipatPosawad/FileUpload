@@ -1,5 +1,5 @@
 ﻿using Domain.BlobRepositories;
-using Repository.BlobRepositories;
+using DataAccess.BlobRepositories;
 
 namespace WebApi.DependencyInjection
 {
