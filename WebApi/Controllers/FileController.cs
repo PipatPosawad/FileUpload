@@ -1,21 +1,29 @@
 ﻿using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using WebApi.Infrastructure;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Controller for file uploading
+    /// </summary>
     [ApiController]
+    [V1RoutePrefix(FileRoutes.RoutePrefix)]
     public class FileController : ControllerBase
     {
         private readonly IFileUploadService _fileUploadService;
 
-        public FileController()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileUploadService"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public FileController(IFileUploadService fileUploadService)
         {
-
+            _fileUploadService = fileUploadService ?? throw new ArgumentNullException(nameof(fileUploadService));
         }
 
+        [HttpPost]
         public async Task<IActionResult> PostUploadAsync(List<IFormFile> files)
         {
             long size = files.Sum(f => f.Length);
