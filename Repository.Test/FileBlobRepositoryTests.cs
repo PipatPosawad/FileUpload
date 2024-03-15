@@ -1,4 +1,4 @@
-namespace DataAccess.Test
+namespace DataAccess.Tests
 {
     [TestClass]
     public class FileBlobRepositoryTests

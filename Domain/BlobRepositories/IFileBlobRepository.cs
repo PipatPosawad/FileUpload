@@ -2,6 +2,6 @@
 {
     public interface IFileBlobRepository
     {
-        Task UploadAsync();
+        Task UploadAsync(string filePath, Stream content, bool resetDocumentStreamPosition = true);
     }
 }
