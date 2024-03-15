@@ -1,5 +1,8 @@
 ﻿using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.Net.Mime;
+using WebApi.Dtos;
 using WebApi.Infrastructure;
 
 namespace WebApi.Controllers
@@ -9,6 +12,7 @@ namespace WebApi.Controllers
     /// </summary>
     [ApiController]
     [V1RoutePrefix(FileRoutes.RoutePrefix)]
+    [Produces(MediaTypeNames.Application.Json)]
     public class FileController : ControllerBase
     {
         private readonly IFileUploadService _fileUploadService;
@@ -29,7 +33,7 @@ namespace WebApi.Controllers
         /// <param name="file"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> PostUploadAsync(IFormFile file)
+        public async Task<IActionResult> PostUploadAsync([Required] IFormFile file)
         {
             if (file.Length > 0)
             {
@@ -39,8 +43,11 @@ namespace WebApi.Controllers
 
             // Process uploaded files
             // Don't rely on or trust the FileName property without validation.
-
-            return Ok();
+            var result = new FileDto()
+            {
+                Id = Guid.NewGuid()
+            };
+            return Ok(result);
         }
 
         //// GET: api/<FileController>
