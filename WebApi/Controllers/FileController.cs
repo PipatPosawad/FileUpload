@@ -38,16 +38,17 @@ namespace WebApi.Controllers
             if (file.Length > 0)
             {
                 var fileStream = file.OpenReadStream();
-                await _fileUploadService.UploadAsync(fileStream);
-            }
+                var fileModel = await _fileUploadService.UploadAsync(file.Name, fileStream);
 
-            // Process uploaded files
-            // Don't rely on or trust the FileName property without validation.
-            var result = new FileDto()
+                // Process uploaded files
+                // Don't rely on or trust the FileName property without validation.
+                var result = FileDtoMapper.Map(fileModel);
+                return Ok(result);
+            }
+            else
             {
-                Id = Guid.NewGuid()
-            };
-            return Ok(result);
+                return BadRequest();
+            }
         }
 
         //// GET: api/<FileController>

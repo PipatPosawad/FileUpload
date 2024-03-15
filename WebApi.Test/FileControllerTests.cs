@@ -37,7 +37,7 @@ namespace WebApi.Tests
             Assert.IsNotNull(result);
             Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
 
-            _mockFileUploadService.Verify(x => x.UploadAsync(It.IsAny<Stream>()), Times.Once);
+            _mockFileUploadService.Verify(x => x.UploadAsync(It.IsAny<string>(), It.IsAny<Stream>()), Times.Once);
         }
 
         private static IFormFile GetSampleFile()
