@@ -22,7 +22,8 @@ namespace DataAccess.BlobRepositories
         /// <param name="blobContainerFactory"></param>
         public FileBlobRepository(IBlobClientOptionsFactory blobClientOptionsFactory, 
             IBlobStorageConfigurationProvider blobStorageConfigurationProvider, 
-            ILogger logger, IBlobContainerFactory blobContainerFactory) 
+            ILogger logger, 
+            IBlobContainerFactory blobContainerFactory) 
             : base(blobClientOptionsFactory, blobStorageConfigurationProvider, logger, blobContainerFactory)
         {
         }
