@@ -1,5 +1,6 @@
 ﻿using Domain.BlobRepositories;
 using DataAccess.BlobRepositories;
+using DataAccess.Factories;
 
 namespace WebApi.DependencyInjection
 {
@@ -15,7 +16,9 @@ namespace WebApi.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddRepositoryModule(this IServiceCollection services)
         {
-            services.AddScoped<IFileBlobRepository, FileBlobRepository>();
+            services
+                .AddSingleton<IBlobClientOptionsFactory, BlobClientOptionsFactory>()
+                .AddScoped<IFileBlobRepository, FileBlobRepository>();
 
             return services;
         }
