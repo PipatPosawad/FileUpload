@@ -27,14 +27,13 @@ namespace Service
         /// <param name="name"></param>
         /// <param name="stream"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<FileModel> UploadAsync(string name, string contentType, Stream stream)
         {
             var fileModel = new FileModel
             {
                 Id = Guid.NewGuid(),
                 Name = name,
-                Size = stream.Length,
+                SizeInBytes = stream.Length,
                 ContentType = contentType
             };
 

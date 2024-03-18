@@ -8,6 +8,6 @@
 
         public string ContentType { get; set; }
 
-        public long Size { get; set; }
+        public long SizeInBytes { get; set; }
     }
 }

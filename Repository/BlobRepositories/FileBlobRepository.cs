@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using DataAccess.Factories;
 using DataAccess.Providers;
 using Domain.BlobRepositories;
@@ -12,6 +13,10 @@ namespace DataAccess.BlobRepositories
     /// </summary>
     public class FileBlobRepository : BaseBlobStorageRepository, IFileBlobRepository
     {
+        private readonly string NameMetadataKey = "Name";
+        private readonly string ContentTypeMetadataKey = "ContentType";
+        private readonly string SizeInBytesMetadataKey = "SizeInBytes";
+
         public override string SubContainerName => "temp";
 
         /// <summary>
@@ -45,7 +50,20 @@ namespace DataAccess.BlobRepositories
                 ResetStreamPosition(content);
             }
 
-            await blobClient.UploadAsync(content);
+            var blobHttpHeaders = new BlobHttpHeaders { ContentType = file.ContentType };
+            var metadata = new Dictionary<string, string>()
+            {
+                { NameMetadataKey, file.Name },
+                { ContentTypeMetadataKey, file.ContentType },
+                { SizeInBytesMetadataKey, file.SizeInBytes.ToString() }
+            };
+            var blobUploadOptions = new BlobUploadOptions
+            {
+                Metadata = metadata,
+                HttpHeaders = blobHttpHeaders
+            };
+
+            await blobClient.UploadAsync(content, options: blobUploadOptions);
         }        
 
         private static void ResetStreamPosition(Stream content)

@@ -25,7 +25,7 @@ namespace WebApi.Infrastructure
                 Id = model.Id,
                 Name = model.Name,
                 ContentType = model.ContentType,
-                Size = model.Size
+                SizeInBytes = model.SizeInBytes
             };
         }
     }
