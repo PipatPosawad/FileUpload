@@ -1,4 +1,5 @@
 ﻿using Domain.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
@@ -10,6 +11,7 @@ namespace WebApi.Controllers
     /// <summary>
     /// Controller for file uploading
     /// </summary>
+    [Authorize(Policy = "AuthZPolicy")]
     [ApiController]
     [V1RoutePrefix(FileRoutes.RoutePrefix)]
     [Produces(MediaTypeNames.Application.Json)]
@@ -38,7 +40,7 @@ namespace WebApi.Controllers
             if (file.Length > 0)
             {
                 var fileStream = file.OpenReadStream();
-                var fileModel = await _fileUploadService.UploadAsync(file.Name, fileStream);
+                var fileModel = await _fileUploadService.UploadAsync(file.FileName, file.ContentType, fileStream);
 
                 // Process uploaded files
                 // Don't rely on or trust the FileName property without validation.

@@ -28,16 +28,19 @@ namespace Service
         /// <param name="stream"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<FileModel> UploadAsync(string name, Stream stream)
+        public async Task<FileModel> UploadAsync(string name, string contentType, Stream stream)
         {
-            await _fileBlobRepository.UploadAsync(name, stream);
-
-            return new FileModel
+            var fileModel = new FileModel
             {
                 Id = Guid.NewGuid(),
                 Name = name,
                 Size = stream.Length,
+                ContentType = contentType
             };
+
+            await _fileBlobRepository.UploadAsync(fileModel, stream);
+
+            return fileModel;
         }
     }
 }

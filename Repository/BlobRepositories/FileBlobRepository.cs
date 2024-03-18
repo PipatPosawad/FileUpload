@@ -2,6 +2,7 @@
 using DataAccess.Factories;
 using DataAccess.Providers;
 using Domain.BlobRepositories;
+using Domain.Models;
 using Microsoft.Extensions.Logging;
 
 namespace DataAccess.BlobRepositories
@@ -31,13 +32,13 @@ namespace DataAccess.BlobRepositories
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="file"></param>
         /// <param name="content"></param>
         /// <param name="resetStreamPosition"></param>
         /// <returns></returns>
-        public async Task UploadAsync(string filePath, Stream content, bool resetStreamPosition = true)
+        public async Task UploadAsync(FileModel file, Stream content, bool resetStreamPosition = true)
         {
-            var blobClient = await GetBlobClientAsync(filePath);
+            var blobClient = await GetBlobClientAsync(file.Id.ToString());
 
             if (resetStreamPosition)
             {

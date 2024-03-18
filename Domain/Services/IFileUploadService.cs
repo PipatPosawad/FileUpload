@@ -11,8 +11,9 @@ namespace Domain.Services
         /// Uploads a file.
         /// </summary>
         /// <param name="name"></param>
+        /// <param name="contentType"></param>
         /// <param name="stream"></param>
         /// <returns></returns>
-        Task<FileModel> UploadAsync(string name, Stream stream);
+        Task<FileModel> UploadAsync(string name, string contentType, Stream stream);
     }
 }

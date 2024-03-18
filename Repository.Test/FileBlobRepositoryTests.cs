@@ -3,6 +3,7 @@ using DataAccess.BlobRepositories;
 using DataAccess.Configurations;
 using DataAccess.Factories;
 using DataAccess.Providers;
+using Domain.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -37,7 +38,10 @@ namespace DataAccess.Tests
         public async Task UploadAsync_ReturnsNothing_WhenUploadFileIsSuccessful()
         {
             // Arrange
-            var filePath = "mock-path";
+            var fileModel = new FileModel()
+            {
+                Name = "mock-path"
+            };
             using var content = new MemoryStream();
 
             var keyUri = new Uri("https://localhost/key");
@@ -57,7 +61,7 @@ namespace DataAccess.Tests
                 .Returns(mockBlobClient.Object);
 
             // Act
-            await _repository.UploadAsync(filePath, content);
+            await _repository.UploadAsync(fileModel, content);
 
             // Assert
             mockBlobClient.Verify(x => x.UploadAsync(content), Times.Once);

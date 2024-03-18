@@ -4,12 +4,12 @@ using WebApi.Dtos;
 namespace WebApi.Infrastructure
 {
     /// <summary>
-    /// Contains mapping methods for <see cref="PendingTrayUploadingResultModel"/>
+    /// Contains mapping methods for <see cref="FileModel"/>
     /// </summary>
     public static class FileDtoMapper
     {
         /// <summary>
-        /// Converts a <see cref="PendingTrayUploadingResultModel"/> to a <see cref="PendingTrayUploadingResult"/>
+        /// Converts a <see cref="FileModel"/> to a <see cref="FileDto"/>
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -24,6 +24,7 @@ namespace WebApi.Infrastructure
             {
                 Id = model.Id,
                 Name = model.Name,
+                ContentType = model.ContentType,
                 Size = model.Size
             };
         }

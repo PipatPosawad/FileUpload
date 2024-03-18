@@ -1,7 +1,9 @@
-﻿namespace Domain.BlobRepositories
+﻿using Domain.Models;
+
+namespace Domain.BlobRepositories
 {
     public interface IFileBlobRepository
     {
-        Task UploadAsync(string filePath, Stream content, bool resetDocumentStreamPosition = true);
+        Task UploadAsync(FileModel file, Stream content, bool resetStreamPosition = true);
     }
 }
