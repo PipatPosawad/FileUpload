@@ -55,7 +55,7 @@ namespace WebApi.Controllers
 
         //// GET: api/<FileController>
         //[HttpGet]
-        //public IEnumerable<string> Get()
+        //public async Task<IActionResult> Get()
         //{
         //    return new string[] { "value1", "value2" };
         //}
