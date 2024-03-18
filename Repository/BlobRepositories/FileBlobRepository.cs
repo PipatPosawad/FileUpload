@@ -1,10 +1,13 @@
-﻿using Azure.Storage.Blobs;
+﻿using Azure;
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using DataAccess.Factories;
 using DataAccess.Providers;
 using Domain.BlobRepositories;
 using Domain.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAzure.Storage.Blob;
+using BlobProperties = Azure.Storage.Blobs.Models.BlobProperties;
 
 namespace DataAccess.BlobRepositories
 {
@@ -64,7 +67,68 @@ namespace DataAccess.BlobRepositories
             };
 
             await blobClient.UploadAsync(content, options: blobUploadOptions);
-        }        
+        }
+
+
+        /// <summary>
+        ///  Gets a read-only file content for the blob file.
+        /// </summary>
+        /// <param name="id">The path to the file to open.</param>
+        /// <returns>The opened stream for reading from blob.</returns>
+        public async Task<FileContentModel> OpenReadStreamAsync(Guid id)
+        {
+            ArgumentNullException.ThrowIfNull(nameof(id));
+
+            var blobClient = await GetBlobClientAsync(id.ToString());
+
+            try
+            {
+                var propertyResponse = await blobClient.GetPropertiesAsync();
+                var stream = await blobClient.OpenReadAsync();
+                var metadata = await GetFileMetadataAsync(id.ToString());
+
+                var contentType = "application/octet-stream";
+                var name = "default";
+                if (metadata.TryGetValue(ContentTypeMetadataKey, out var originalContentType))
+                {
+                    contentType = originalContentType;
+                }
+                if (metadata.TryGetValue(NameMetadataKey, out var originalName))
+                {
+                    name = originalName;
+                }
+
+                return new FileContentModel
+                {
+                    FileStream = stream,
+                    ContentType = contentType,
+                    Name = name
+                };
+            }
+            catch (RequestFailedException ex)
+                when (ex.ErrorCode == BlobErrorCode.BlobNotFound)
+            {
+                Logger.LogError(ex, "Failed to open, no file is found with given id '{id}'.", id);
+                return null;
+            }
+        }
+
+        private async Task<IDictionary<string, string>> GetFileMetadataAsync(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentNullException(nameof(filePath));
+
+            var properties = await GetFilePropertiesAsync(filePath);
+            return properties?.Metadata;
+        }
+
+        private async Task<BlobProperties> GetFilePropertiesAsync(string filePath)
+        {
+            var key = FormattableString.Invariant($"{SubContainerName}/{filePath}");
+            var containerClient = await GetBlobClientAsync(filePath);
+            var properties = await containerClient.GetPropertiesAsync();
+
+            return properties;
+        }
 
         private static void ResetStreamPosition(Stream content)
         {

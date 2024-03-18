@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Net.Mime;
 using WebApi.Dtos;
 using WebApi.Infrastructure;
@@ -35,7 +36,7 @@ namespace WebApi.Controllers
         /// <param name="file"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> PostUploadAsync([Required] IFormFile file)
+        public async Task<IActionResult> UploadAsync([Required] IFormFile file)
         {
             if (file.Length > 0)
             {
@@ -51,6 +52,19 @@ namespace WebApi.Controllers
             {
                 return BadRequest();
             }
+        }
+
+        /// <summary>
+        /// Downloads a file
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id:guid}/content")]
+        public async Task<IActionResult> DownloadAsync(Guid id)
+        {
+            var result = await _fileUploadService.DownloadAsync(id);
+
+            return new FileStreamResult(result.FileStream, result.ContentType);
         }
 
         //// GET: api/<FileController>

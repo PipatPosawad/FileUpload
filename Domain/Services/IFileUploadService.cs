@@ -15,5 +15,7 @@ namespace Domain.Services
         /// <param name="stream"></param>
         /// <returns></returns>
         Task<FileModel> UploadAsync(string name, string contentType, Stream stream);
+
+        Task<FileContentModel> DownloadAsync(Guid id);
     }
 }

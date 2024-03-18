@@ -2,6 +2,6 @@
 {
     internal static class FileRoutes
     {
-        internal const string RoutePrefix = "file";
+        internal const string RoutePrefix = "files";
     }
 }

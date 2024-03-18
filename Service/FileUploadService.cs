@@ -22,6 +22,16 @@ namespace Service
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<FileContentModel> DownloadAsync(Guid id)
+        {
+            return await _fileBlobRepository.OpenReadStreamAsync(id);
+        }
+
+        /// <summary>
         /// Uploads file.
         /// </summary>
         /// <param name="name"></param>

@@ -31,7 +31,7 @@ namespace WebApi.Tests
             var file = GetSampleFile();
 
             // Act
-            var result = await _controller.PostUploadAsync(file) as OkObjectResult;
+            var result = await _controller.UploadAsync(file) as OkObjectResult;
 
             // Assert
             Assert.IsNotNull(result);
