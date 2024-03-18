@@ -1,7 +1,10 @@
+using Domain.Models;
 using Domain.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.Net.Mime;
 using System.Text;
 using WebApi.Controllers;
 
@@ -25,7 +28,34 @@ namespace WebApi.Tests
         }
 
         [TestMethod]
-        public async Task PostUploadAsync_ReturnsOk_WhenOperationIsSuccessful()
+        public async Task DownloadAsync_ReturnsOk_WhenOperationIsSuccessful()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var fileName = "purchase_invoice.pdf";
+            using var fileStream = new MemoryStream();
+            var fileContent = new FileContentModel
+            {
+                Name = fileName,
+                ContentType = MediaTypeNames.Application.Octet,
+                FileStream = fileStream
+            };
+
+            _mockFileUploadService.Setup(x => x.DownloadAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(fileContent);
+
+            // Act
+            var result = await _controller.DownloadAsync(id) as FileStreamResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(fileContent.ContentType, result.ContentType);
+            Assert.AreEqual(fileContent.Name, result.FileDownloadName);
+            Assert.AreSame(fileContent.FileStream, result.FileStream);
+        }
+
+        [TestMethod]
+        public async Task UploadAsync_ReturnsOk_WhenOperationIsSuccessful()
         {
             // Arrange
             var file = GetSampleFile();

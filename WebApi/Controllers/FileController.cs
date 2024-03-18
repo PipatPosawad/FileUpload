@@ -64,7 +64,7 @@ namespace WebApi.Controllers
         {
             var result = await _fileUploadService.DownloadAsync(id);
 
-            return new FileStreamResult(result.FileStream, result.ContentType);
+            return File(result.FileStream, result.ContentType, result.Name);
         }
 
         //// GET: api/<FileController>
