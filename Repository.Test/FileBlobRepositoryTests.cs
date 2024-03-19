@@ -1,70 +1,81 @@
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using DataAccess.BlobRepositories;
 using DataAccess.Configurations;
 using DataAccess.Factories;
 using DataAccess.Providers;
+using Domain;
 using Domain.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.Net.Mime;
+using System.Text;
 
 namespace DataAccess.Tests
 {
     [TestClass]
-    public class FileBlobRepositoryTests
+    [TestCategory("IntegrationTest")]
+    public class FileBlobRepositoryTests : BaseRepositoryTests
     {
-        private Mock<IBlobClientOptionsFactory> _mockBlobClientOptionsFactory;
-        private Mock<IBlobStorageConfigurationProvider> _mockBlobStorageConfigurationProvider;
         private Mock<ILogger> _mockLogger;
-        private Mock<IBlobContainerFactory> _mockBlobContainerFactory;
 
         private FileBlobRepository _repository;
 
         [TestInitialize]
         public void Initialize()
         {
-            _mockBlobClientOptionsFactory = new Mock<IBlobClientOptionsFactory>();
-            _mockBlobStorageConfigurationProvider = new Mock<IBlobStorageConfigurationProvider>();
             _mockLogger = new Mock<ILogger>();
-            _mockBlobContainerFactory = new Mock<IBlobContainerFactory>();
 
             _repository = new FileBlobRepository(
-                _mockBlobClientOptionsFactory.Object,
-                _mockBlobStorageConfigurationProvider.Object,
+                BlobClientOptionsFactory,
+                BlobStorageConfigurationProvider,
                 _mockLogger.Object,
-                _mockBlobContainerFactory.Object);
+                BlobContainerFactory);
         }
 
         [TestMethod]
         public async Task UploadAsync_ReturnsNothing_WhenUploadFileIsSuccessful()
         {
             // Arrange
+            using var ms = new MemoryStream(Encoding.UTF8.GetBytes("hello world"));
+            var fileName = "Test.pdf";
+            var contentType = "application/pdf";
             var fileModel = new FileModel()
             {
-                Name = "mock-path"
+                Name = fileName,
+                ContentType = contentType,
+                Id = Guid.NewGuid(),
+                SizeInBytes = ms.Length
             };
-            using var content = new MemoryStream();
-
-            var keyUri = new Uri("https://localhost/key");
-            var mockBlobStorageConfiguration = new Mock<BlobStorageConfiguration>();
-            var mockBlobContainerClient = new Mock<BlobContainerClient>();
-            var mockBlobClient = new Mock<BlobClient>();
-
-            mockBlobStorageConfiguration.Setup(x => x.KeyUri).Returns(keyUri);
-
-            _mockBlobStorageConfigurationProvider.Setup(x => x.Get())
-                .Returns(mockBlobStorageConfiguration.Object);
-
-            _mockBlobContainerFactory.Setup(x => x.Get(It.IsAny<Uri>(), It.IsAny<BlobClientOptions>()))
-                .Returns(mockBlobContainerClient.Object);
-
-            mockBlobContainerClient.Setup(x => x.GetBlobClient(It.IsAny<string>()))
-                .Returns(mockBlobClient.Object);
+            var blobClient = await GetBlobClientAsync(fileModel.Id.ToString());
+            await blobClient.DeleteIfExistsAsync();
+            
+            var metadata = new Dictionary<string, string>()
+            {
+                { BlobStorageMetadataKeys.OriginalFileName, fileName }
+            };
+            using var content = new MemoryStream(Encoding.UTF8.GetBytes("hello world"));
 
             // Act
             await _repository.UploadAsync(fileModel, content);
 
             // Assert
-            mockBlobClient.Verify(x => x.UploadAsync(content), Times.Once);
+            var fileExists = await blobClient.ExistsAsync();
+            Assert.IsTrue(fileExists);
+
+            BlobProperties properties = await blobClient.GetPropertiesAsync();
+            Assert.IsTrue(fileExists);
+            Assert.AreEqual(contentType, properties.ContentType);
+            Assert.AreEqual(metadata[BlobStorageMetadataKeys.OriginalFileName], properties.Metadata[BlobStorageMetadataKeys.OriginalFileName]);
+        }
+
+        private async Task<BlobClient> GetBlobClientAsync(string filePath)
+        {
+            var fullPath = FormattableString.Invariant($"{_repository.SubContainerName}/{filePath}");
+            var blobContainer = await CreateBlobContainerClientAsync();
+            var blobClient = blobContainer.GetBlobClient(fullPath);
+
+            return blobClient;
         }
     }
 }

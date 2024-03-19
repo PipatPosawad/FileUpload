@@ -3,6 +3,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using DataAccess.Factories;
 using DataAccess.Providers;
+using Domain;
 using Domain.BlobRepositories;
 using Domain.Models;
 using Microsoft.Extensions.Logging;
@@ -16,10 +17,6 @@ namespace DataAccess.BlobRepositories
     /// </summary>
     public class FileBlobRepository : BaseBlobStorageRepository, IFileBlobRepository
     {
-        private readonly string NameMetadataKey = "Name";
-        private readonly string ContentTypeMetadataKey = "ContentType";
-        private readonly string SizeInBytesMetadataKey = "SizeInBytes";
-
         public override string SubContainerName => "temp";
 
         /// <summary>
@@ -56,9 +53,9 @@ namespace DataAccess.BlobRepositories
             var blobHttpHeaders = new BlobHttpHeaders { ContentType = file.ContentType };
             var metadata = new Dictionary<string, string>()
             {
-                { NameMetadataKey, file.Name },
-                { ContentTypeMetadataKey, file.ContentType },
-                { SizeInBytesMetadataKey, file.SizeInBytes.ToString() }
+                { BlobStorageMetadataKeys.OriginalFileName, file.Name },
+                { BlobStorageMetadataKeys.OriginalContentType, file.ContentType },
+                { BlobStorageMetadataKeys.OriginalFileSize, file.SizeInBytes.ToString() }
             };
             var blobUploadOptions = new BlobUploadOptions
             {
@@ -89,11 +86,11 @@ namespace DataAccess.BlobRepositories
 
                 var contentType = "application/octet-stream";
                 var name = "default";
-                if (metadata.TryGetValue(ContentTypeMetadataKey, out var originalContentType))
+                if (metadata.TryGetValue(BlobStorageMetadataKeys.OriginalContentType, out var originalContentType))
                 {
                     contentType = originalContentType;
                 }
-                if (metadata.TryGetValue(NameMetadataKey, out var originalName))
+                if (metadata.TryGetValue(BlobStorageMetadataKeys.OriginalFileName, out var originalName))
                 {
                     name = originalName;
                 }
