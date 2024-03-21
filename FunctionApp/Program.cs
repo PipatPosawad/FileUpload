@@ -31,7 +31,8 @@ var host = new HostBuilder()
             });
 
         services.BindSettings<BlobStorageSettings>("BlobStorage")
-                .BindSettings<KeyVaultSettings>("KeyVault");
+                .BindSettings<KeyVaultSettings>("KeyVault")
+                .BindSettings<MailNotificationSettings>("MailNotification");
         services.AddFunctionAppModule(azureFunctionsEnvironment);
     })    
     .Build();

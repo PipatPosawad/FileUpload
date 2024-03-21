@@ -4,7 +4,12 @@
     "AzureWebJobsStorage": "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "BlobStorage:DisableEncryptionOnLocal": true,
-    "KeyVault:Uri": "https://localhost/keyvault/"
+    "KeyVault:Uri": "https://localhost/keyvault/",
+    "MailNotification:SmtpServer": "127.0.0.1",
+    "MailNotification:SmtpPort": "25",
+    "MailNotification:FromAddress": "sender@example.com",
+    "MailNotification:ToAddress": "recipient@example.com",
+    "MailNotification:Subject": "Hello from Papercut!"
   },
   "ConnectionStrings": {
     "SystemStorage": "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
