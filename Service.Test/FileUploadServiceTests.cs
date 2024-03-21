@@ -1,4 +1,6 @@
 using Domain.BlobRepositories;
+using Domain.Messages;
+using Domain.QueueRepositories;
 using Moq;
 
 namespace Service.Test
@@ -6,6 +8,7 @@ namespace Service.Test
     [TestClass]
     public class FileUploadServiceTests
     {
+        private Mock<IMailNotificationQueueRepository> _mockQueueRepository;
         private Mock<IFileBlobRepository> _mockFileBlobRepository;
 
         private FileUploadService _service;
@@ -13,9 +16,11 @@ namespace Service.Test
         [TestInitialize]
         public void Initialize()
         {
+            _mockQueueRepository = new Mock<IMailNotificationQueueRepository>();
             _mockFileBlobRepository = new Mock<IFileBlobRepository>();
 
-            _service = new FileUploadService(_mockFileBlobRepository.Object);
+            _service = new FileUploadService(_mockFileBlobRepository.Object,
+                _mockQueueRepository.Object);
         }
 
         [TestMethod]
@@ -31,6 +36,8 @@ namespace Service.Test
 
             // Assert
             Assert.IsNotNull(actual);
+
+            _mockQueueRepository.Verify(x => x.SendMessageAsync(It.IsAny<MailNotificationMessage>()), Times.Once);
         }
     }
 }

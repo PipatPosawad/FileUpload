@@ -1,5 +1,6 @@
 ﻿using Domain.BlobRepositories;
 using Domain.Models;
+using Domain.QueueRepositories;
 using Domain.Services;
 
 namespace Service
@@ -10,15 +11,19 @@ namespace Service
     public class FileUploadService : IFileUploadService
     {
         private readonly IFileBlobRepository _fileBlobRepository;
+        private readonly IMailNotificationQueueRepository _mailNotificationQueueRepository;
 
         /// <summary>
         /// Initialize a new <see cref="FileUploadService"/> object.
         /// </summary>
         /// <param name="fileBlobRepository"></param>
+        /// <param name="mailNotificationQueueRepository"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public FileUploadService(IFileBlobRepository fileBlobRepository)
+        public FileUploadService(IFileBlobRepository fileBlobRepository,
+            IMailNotificationQueueRepository mailNotificationQueueRepository)
         {
             _fileBlobRepository = fileBlobRepository ?? throw new ArgumentNullException(nameof(fileBlobRepository));
+            _mailNotificationQueueRepository = mailNotificationQueueRepository ?? throw new ArgumentNullException(nameof(mailNotificationQueueRepository));
         }
 
         /// <summary>
@@ -48,6 +53,12 @@ namespace Service
             };
 
             await _fileBlobRepository.UploadAsync(fileModel, stream);
+
+            var message = new Domain.Messages.MailNotificationMessage()
+            {
+                FileId = fileModel.Id
+            };
+            await _mailNotificationQueueRepository.SendMessageAsync(message);
 
             return fileModel;
         }

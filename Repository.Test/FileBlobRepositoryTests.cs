@@ -4,7 +4,7 @@ using DataAccess.BlobRepositories;
 using DataAccess.Configurations;
 using DataAccess.Factories;
 using DataAccess.Providers;
-using Domain;
+using Domain.Constants;
 using Domain.Models;
 using Microsoft.Extensions.Logging;
 using Moq;

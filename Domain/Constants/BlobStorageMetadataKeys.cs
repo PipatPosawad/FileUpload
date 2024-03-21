@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain
+namespace Domain.Constants
 {
     /// <summary>
     /// Contains keys for temporary blob storage before archive

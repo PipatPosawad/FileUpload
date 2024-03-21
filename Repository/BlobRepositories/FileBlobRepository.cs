@@ -3,8 +3,8 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using DataAccess.Factories;
 using DataAccess.Providers;
-using Domain;
 using Domain.BlobRepositories;
+using Domain.Constants;
 using Domain.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -82,7 +82,7 @@ namespace DataAccess.BlobRepositories
             {
                 var propertyResponse = await blobClient.GetPropertiesAsync();
                 var stream = await blobClient.OpenReadAsync();
-                var metadata = await GetFileMetadataAsync(id.ToString());
+                var metadata = await GetFileMetadataAsync(id);
 
                 var contentType = "application/octet-stream";
                 var name = "default";
@@ -110,11 +110,9 @@ namespace DataAccess.BlobRepositories
             }
         }
 
-        private async Task<IDictionary<string, string>> GetFileMetadataAsync(string filePath)
+        public async Task<IDictionary<string, string>> GetFileMetadataAsync(Guid id)
         {
-            if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentNullException(nameof(filePath));
-
-            var properties = await GetFilePropertiesAsync(filePath);
+            var properties = await GetFilePropertiesAsync(id.ToString());
             return properties?.Metadata;
         }
 

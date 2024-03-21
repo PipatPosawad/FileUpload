@@ -1,6 +1,8 @@
 ﻿using Domain.BlobRepositories;
 using DataAccess.BlobRepositories;
 using DataAccess.Factories;
+using Domain.QueueRepositories;
+using DataAccess.QueueRepositories;
 
 namespace WebApi.DependencyInjection
 {
@@ -17,8 +19,8 @@ namespace WebApi.DependencyInjection
         public static IServiceCollection AddRepositoryModule(this IServiceCollection services)
         {
             services
-                .AddSingleton<IBlobClientOptionsFactory, BlobClientOptionsFactory>()
-                .AddScoped<IFileBlobRepository, FileBlobRepository>();
+                .AddScoped<IFileBlobRepository, FileBlobRepository>()
+                .AddScoped<IMailNotificationQueueRepository, MailNotificationQueueRepository>();
 
             return services;
         }

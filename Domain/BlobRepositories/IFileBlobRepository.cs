@@ -7,5 +7,7 @@ namespace Domain.BlobRepositories
         Task UploadAsync(FileModel file, Stream content, bool resetStreamPosition = true);
 
         Task<FileContentModel> OpenReadStreamAsync(Guid id);
+
+        Task<IDictionary<string, string>> GetFileMetadataAsync(Guid id);
     }
 }
