@@ -2,6 +2,7 @@
 using DataAccess.Configurations;
 using DataAccess.Factories;
 using DataAccess.Providers;
+using Domain;
 using Domain.BlobRepositories;
 using Domain.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +41,7 @@ namespace FunctionApp
             services
                 .AddSingleton<IStorageAccountConfiguration, StorageAccountConfiguration>()
                 .AddSingleton<IKeyVaultConfiguration, KeyVaultConfiguration>()
+                .AddScoped<ISmtpClientFactory, SmtpClientFactory>()
                 .AddScoped<IBlobStorageConfigurationProvider, BlobStorageConfigurationProvider>()
                 .AddScoped<IFileBlobRepository, FileBlobRepository>();
 

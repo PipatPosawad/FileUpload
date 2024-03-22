@@ -1,4 +1,5 @@
-﻿using Domain.BlobRepositories;
+﻿using Domain;
+using Domain.BlobRepositories;
 using Domain.Constants;
 using Domain.Services;
 using Domain.Settings;
@@ -17,15 +18,18 @@ namespace Service
     {
         private readonly ILogger _logger;
         private readonly IFileBlobRepository _fileBlobRepository;
+        private readonly ISmtpClientFactory _smtpClientFactory;
 
         private MailNotificationSettings _mailNotificationSettings { get; }
 
         public MailNotificationService(IFileBlobRepository fileBlobRepository,
             IOptions<MailNotificationSettings> mailNotificationSettings,
-            ILogger logger)
+            ILogger logger,
+            ISmtpClientFactory smtpClientFactory)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _fileBlobRepository = fileBlobRepository ?? throw new ArgumentNullException(nameof(fileBlobRepository));
+            _smtpClientFactory = smtpClientFactory ?? throw new ArgumentNullException(nameof(smtpClientFactory));
 
             if (mailNotificationSettings?.Value == null)
             {
@@ -49,7 +53,7 @@ namespace Service
             var mail = new MailMessage(_mailNotificationSettings.FromAddress, _mailNotificationSettings.ToAddress, _mailNotificationSettings.Subject, body);
 
             // Create the SMTP client
-            var smtpClient = new SmtpClient(_mailNotificationSettings.SmtpServer, _mailNotificationSettings.SmtpPort);
+            var smtpClient = _smtpClientFactory.Create(_mailNotificationSettings.SmtpServer, _mailNotificationSettings.SmtpPort);
 #if DEBUG
             smtpClient.EnableSsl = false;
 #endif
